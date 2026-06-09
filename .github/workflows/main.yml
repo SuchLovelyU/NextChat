@@ -1,0 +1,22 @@
+name: Update yarn.lock
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22
+      - run: npm install -g yarn
+      - run: yarn install --no-frozen-lockfile
+      - name: Commit yarn.lock
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add yarn.lock
+          git diff --staged --quiet || git commit -m "update yarn.lock"
+          git push
